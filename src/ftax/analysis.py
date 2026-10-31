@@ -124,7 +124,7 @@ def _reasoning_number(text: str) -> str | None:
 def self_contradiction(a: pd.DataFrame) -> pd.DataFrame:
     """GSM8K answer-first replies: how often the reasoning's last number differs from the answer given
     before it, and how often that later number is the right one."""
-    items = {it["id"]: it for it in load_items("main", ["gsm8k"])}
+    items = {it["id"]: it for it in load_items(None, ["gsm8k"])}
     out = []
     g = a[(a.task == "gsm8k") & a.variant.isin(["json_answer_first", "schema_answer_first"])]
     for (m, v), gg in g.groupby(["model", "variant"]):
@@ -176,7 +176,7 @@ def drift_contrasts(b: pd.DataFrame) -> pd.DataFrame:
 
 def _field_rows(b: pd.DataFrame, variant: str, pick) -> pd.DataFrame:
     """One row per (model, mode, record, field) for the fields `pick(item)` selects."""
-    items = {it["id"]: it for it in load_items("main", ["drift"])}
+    items = {it["id"]: it for it in load_items(None, ["drift"])}
     rows = []
     for r in b[b.variant == variant].itertuples():
         for f in pick(items[r.id]):
@@ -221,7 +221,7 @@ def distractor_table(b: pd.DataFrame) -> pd.DataFrame:
     from .parse import parse_json
     from .prompts import source_record
     from .data import norm
-    items = {it["id"]: it for it in load_items("main", ["drift"])}
+    items = {it["id"]: it for it in load_items(None, ["drift"])}
     out = []
     g = b[b.variant == "distractors"]
     for (m, mode), gg in g.groupby(["model", "mode"]):

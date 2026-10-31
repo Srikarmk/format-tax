@@ -99,7 +99,7 @@ def cmd_show(args):
 
 def cmd_report(args):
     from .report import write_report
-    write_report()
+    write_report(args.split)
 
 
 def main(argv=None):
@@ -120,7 +120,8 @@ def main(argv=None):
     s.add_argument("id")
     s.add_argument("--model", default=C.MODELS[0])
     s.add_argument("--variants", default="")
-    sub.add_parser("report", help="write reports/results.md and reports/figures/")
+    rp = sub.add_parser("report", help="write reports/results.md and reports/figures/")
+    rp.add_argument("--split", default="main", choices=["main", "pilot"])
     args = p.parse_args(argv)
     fn = {"fetch": cmd_fetch, "items": cmd_items, "run": cmd_run, "show": cmd_show, "report": cmd_report}[args.cmd]
     return fn(args) or 0
