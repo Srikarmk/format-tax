@@ -44,3 +44,12 @@ def test_check_drift_nulls_bools_and_fills():
     assert r["fields"]["price_range"] is False
     r = check_drift("not json", GOLD)
     assert not r["parsed"] and not any(r["fields"].values())
+
+
+def test_written_answer_survives_a_truncated_reply():
+    r = check_a("gsm8k", "json_answer_first", '{\n  "answer": 312,\n  "reasoning": "First, we know there are 60 dog', "312")
+    assert r["correct"] is False and r["written_correct"] is True and r["json_found"] is False
+    r = check_a("mmlu", "json_answer_first", '{"answer": "B", "reasoning": "because', "B")
+    assert r["written_correct"] is True
+    r = check_a("gsm8k", "json_cot", '{"reasoning": "6 + 12", "answer": 18}', "18")
+    assert r["correct"] and r["written_correct"]

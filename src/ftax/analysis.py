@@ -74,6 +74,7 @@ def accuracy_table(a: pd.DataFrame) -> pd.DataFrame:
                     "hi": ci["hi"], "json_strict": g["json_strict"].mean() if g["json_strict"].notna().any() else np.nan,
                     "json_found": g["json_found"].mean() if g["json_found"].notna().any() else np.nan,
                     "rescued": g["rescued"].fillna(False).astype(bool).sum(),
+                    "written": g["written_correct"].astype(float).mean() if g["written_correct"].notna().any() else np.nan,
                     "truncated": int(g["truncated"].sum()), "tokens": g["output_tokens"].mean()})
     return pd.DataFrame(out)
 

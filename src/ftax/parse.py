@@ -4,7 +4,8 @@ Free-text replies use prompt-brittleness's parsers ("Answer:" cue, then fallback
 two ways: strictly (the whole reply is one JSON object) and leniently (the first JSON object anywhere in
 the reply, so code fences and a sentence around it are tolerated). Accuracy uses the lenient parse, as a
 production system usually would; the strict rate is reported as schema validity. A reply with no usable
-JSON answer counts as wrong; `rescued` records what a free-text parser would have found in it anyway.
+JSON answer counts as wrong; `rescued` records what a free-text parser would have found in it anyway, and
+`written_correct` whether the value written after "answer": was right even if the JSON never closed.
 """
 
 from __future__ import annotations
@@ -154,16 +155,25 @@ def check_a(task: str, cond: str, text: str, gold: str, options: list[str] | Non
     if cond.startswith("free_"):
         a, how = free(text)
         return {"answer": a, "correct": a is not None and a == g, "method": how, "json_strict": None,
-                "json_found": None, "rescued": None}
+                "json_found": None, "rescued": None, "written_correct": None}
     obj, strict = parse_json(text)
     a = json_answer(task, obj, options)
+    # the value written after "answer": in the raw reply, even when the JSON around it is broken
+    m = re.search(r'"answer"\s*:\s*("(?:[^"\\]|\\.)*"|[^,}\s]+)', _clean(text))
+    written = None
+    if m:
+        try:
+            written = json_answer(task, {"answer": json.loads(m.group(1))}, options)
+        except json.JSONDecodeError:
+            written = json_answer(task, {"answer": m.group(1)}, options)
     rescued = None
     if a is None:
         r, _ = free(text)
         rescued = r is not None and r == g
     return {"answer": a, "correct": a is not None and a == g,
             "method": ("strict json" if strict else "json in text") if a is not None else "none",
-            "json_strict": strict and a is not None, "json_found": obj is not None, "rescued": rescued}
+            "json_strict": strict and a is not None, "json_found": obj is not None, "rescued": rescued,
+            "written_correct": written is not None and written == g}
 
 
 # ---------------------------------------------------------------- Part B

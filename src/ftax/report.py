@@ -130,12 +130,15 @@ def write_report(split: str = "main"):
         out += [md_table(pd.DataFrame(rows, columns=["task", "model", "contrast", "diff", "95% CI", "n"])), ""]
 
         val = acc[acc.condition.str.startswith(("json_", "schema_"))]
-        rows = [[r.task, r.model, LABEL[r.condition], pct(r.json_found, 0), pct(r.json_strict, 0), r.rescued, r.truncated]
-                for r in val.itertuples()]
+        rows = [[r.task, r.model, LABEL[r.condition], pct(r.acc, 0), pct(r.written, 0), pct(r.json_found, 0),
+                 pct(r.json_strict, 0), r.rescued, r.truncated] for r in val.itertuples()]
         out += ["## Part A: JSON validity", "",
-                "`found` = a JSON object with a usable answer anywhere in the reply; `strict` = the whole reply is that "
-                "object; `rescued` = invalid replies a free-text parser would have scored right.", "",
-                md_table(pd.DataFrame(rows, columns=["task", "model", "condition", "found", "strict", "rescued", "truncated"])), ""]
+                "`accuracy` counts a reply with no valid JSON answer as wrong; `as written` scores the value written after "
+                '`"answer":` even when the JSON never closed. `found` = a JSON object with a usable answer anywhere in the '
+                "reply; `strict` = the whole reply is that object; `rescued` = invalid replies a free-text parser would "
+                "have scored right.", "",
+                md_table(pd.DataFrame(rows, columns=["task", "model", "condition", "accuracy", "as written", "found",
+                                                     "strict", "rescued", "truncated"])), ""]
 
         sc = A.self_contradiction(a)
         if len(sc):
