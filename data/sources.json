@@ -1,0 +1,44 @@
+{
+ "gsm8k_test": {
+  "repo": "openai/gsm8k",
+  "revision": "740312add88f781978c0658806c59bc2815b9866",
+  "path": "main/test-00000-of-00001.parquet",
+  "bytes": 419088,
+  "sha256": "ee7b8da9e381df27b9e3f7758a159ab2bdaa4dbaa910546cbbc47e0cb44e4f59"
+ },
+ "e2e_test": {
+  "repo": "tuetschek/e2e_nlg_cleaned",
+  "revision": "6f77a74f6ce3095770924452f3f1b9631f837535",
+  "path": "default/test/0000.parquet",
+  "bytes": 222299,
+  "sha256": "2ffd18a7c46d32dd34cebadf38413cd45dd614e81c25a6e53084a55363f64053"
+ },
+ "mmlu_high_school_biology": {
+  "repo": "cais/mmlu",
+  "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+  "path": "high_school_biology/test-00000-of-00001.parquet",
+  "bytes": 62704,
+  "sha256": "73600cc5c8032ffd20115887ec4f2c868d75c403c70ac1d115295e72cb8d80e3"
+ },
+ "mmlu_high_school_geography": {
+  "repo": "cais/mmlu",
+  "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+  "path": "high_school_geography/test-00000-of-00001.parquet",
+  "bytes": 28162,
+  "sha256": "d083f0a37e9802ff70af8c0ccee95dc6836d80db74f45327519756327076a2c1"
+ },
+ "mmlu_high_school_macroeconomics": {
+  "repo": "cais/mmlu",
+  "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+  "path": "high_school_macroeconomics/test-00000-of-00001.parquet",
+  "bytes": 54819,
+  "sha256": "a0f2d6a33352452442a13ffb947ab04dcf16513e87bee7c52e8957c2bc761a4c"
+ },
+ "mmlu_high_school_psychology": {
+  "repo": "cais/mmlu",
+  "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+  "path": "high_school_psychology/test-00000-of-00001.parquet",
+  "bytes": 92752,
+  "sha256": "9df4a744eb6faa12bb359df1f808c0461c055f240b998a9ec9d97b1c4e49a958"
+ }
+}
