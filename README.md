@@ -1,6 +1,6 @@
 # format-tax
 
-<a href="pyproject.toml"><img alt="Python" src="https://img.shields.io/badge/python-3.11%2B-blue" /></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue" /></a>
+<a href="https://www.srikarmk.dev/projects/format-tax"><img alt="Case study" src="https://img.shields.io/badge/case%20study-srikarmk.dev-5b4fc9" /></a> <a href="pyproject.toml"><img alt="Python" src="https://img.shields.io/badge/python-3.11%2B-blue" /></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue" /></a>
 
 **Question.** Production code asks models for JSON all the time. Does asking for JSON cost accuracy, and
 if so, is it the JSON or where the reasoning goes inside it? Does schema-constrained decoding help or
