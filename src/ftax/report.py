@@ -85,7 +85,7 @@ def fig_drift(dc: pd.DataFrame, path: str):
                 ax.plot(r["diff"], y + off, "o", color=COLORS[m], ms=5, label=m if y == ys[0] else None)
         ax.axvline(0, color="#999", lw=0.8)
         ax.set_title({"json": "JSON asked for in the prompt", "schema": "Schema-constrained decoding"}[mode])
-        ax.xaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1, decimals=0))
+        ax.xaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1, decimals=1))
         ax.set_xlabel("change in field accuracy vs the base export (pp)")
         ax.grid(axis="x", alpha=0.25)
     axes[0].set_yticks(ys, [DRIFT_LABEL[v] for v in vs])

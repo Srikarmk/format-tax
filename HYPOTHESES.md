@@ -111,3 +111,62 @@ reasoning-first JSON, or no drop for answer-first JSON.
 - Noise floor: answer changes between each A/A pair. Field comparison normalises case, accents and
   punctuation; `family_friendly` accepts true/false or yes/no.
 - Not done: no prompt or schema was tuned on the main items, and no item is dropped after the run.
+
+## Addendum, 2026-11-01 13:49 EST: scoring after the full run
+
+The full run finished at 13:47 EST on 2026-11-01 (15,100 calls; `qwen3:30b-a3b` on 50 items per task as planned).
+The Mac slept for about 9.7 hours during the `qwen3:30b-a3b` leg when the charger came out; calls are
+cached one at a time, so this cost time and nothing else. Before scoring I read the failures: every
+base-record Part B error, every unparsed free-text reply, the GSM8K items `llama3.1:8b` lost under JSON,
+the truncated answer-first replies, and the Part B reformat and missing-field errors. No parser, prompt
+or scoring change was made after the run; every number below is from `reports/results.md` as first
+generated. Checks that came out clean: the schema setting took effect (across both parts, 1,363 of
+`llama3.1:8b`'s 1,950 prompt/schema pairs differ in text, all 1,950 of `gemma3:12b`'s, mostly code fences
+and whitespace), so the near-zero schema contrasts are not a request that ignored `format`; every unparsed free-text reply
+was cut off at the cap (2 `qwen3:8b` MMLU, 4 `qwen3:30b-a3b` that spent all 4,096 tokens thinking); every
+base Part B error is a real invented value (`eat_type` "restaurant" or `family_friendly` false for a record
+without that field), not a gold-label problem; and the Part B prompt lists the allowed values, so
+`llama3.1:8b` writing "20-25 GBP" for "£20-25" is a format violation, not strict scoring.
+
+**Score: 15 of 17 held, 2 failed.** Several held predictions were cheap (Part B sat near ceiling, as the
+pilot said it would); the two failures are the informative ones.
+
+| # | Prediction | Result | Verdict |
+|---|---|---|---|
+| 1 | Reasoning helps GSM8K by ≥20 pp | +56, +73, +75 | held |
+| 2 | Reasoning-first JSON within 5 pp of free text on GSM8K, CI includes 0 for ≥2 | qwen −2 [−8, +3], gemma −5 [−11, 0], **llama −9 [−17, −1]** | **failed** (Llama) |
+| 3 | Answer-first ≥10 pp below reasoning-first, within 5 pp of answer-only | −60/−61/−62 both modes; vs answer-only 0, −2, +2 | held |
+| 4 | Answer-first reasoning ends on a different number in ≥10% for ≥2 models | 30%, 41%, 29% (prompt) | held |
+| 5 | Schema minus prompt within 3 pp per shape, averaged | +0.3, −0.2, +0.2 pp | held |
+| 6 | Lenient parse ≥95% of uncut prompt-only replies; gemma strict <50%; schema strict 100% of uncut | min 98.8% (gemma GSM8K); gemma strict 0/600; schema 2,689/2,689 | held |
+| 7 | MMLU reasoning-first JSON within 3 pp of free text; answer-first costs less than GSM8K | −2, −2, −3; answer-first −3, +3, −4 | held |
+| 8 | 30B thinking: answer-first within 3 pp of reasoning-first, GSM8K | −2 [−8, +4] | held |
+| 9 | A model hits the cap on ≥20% of answer-first GSM8K vs <2% reasoning-first | gemma 47%/1%, llama 44%/0% (prompt) | held |
+| 10 | Base export field accuracy ≥97% | 99.6–99.8% | held |
+| 11 | Renamed/reordered within 2 pp of base | max 0.2 pp | held |
+| 12 | Reformatted fields ≥10 pp below base for ≥2 models; schema recovers ≥half | **only llama**, −4.1 pp on changed fields (rating −18, price −16); qwen and gemma 0 | **failed**; schema recovered all of llama's drop |
+| 13 | A removed field is filled in ≥10% of records for ≥1 model, above the never-present rate | gemma 16% vs 2.5%, qwen 11% vs 2.0% | held |
+| 14 | Look-alike fields leak in <3% | 0/150 every model and mode | held |
+| 15 | CSV and nested within 3 pp of base | max −1.2 pp | held |
+| 16 | Schema always parses with exact keys; prompt-only ≥95% | schema 4,050/4,050; prompt-only ≥98.7% | held |
+| 17 | Part B A/A changes no answers | 0/150 everywhere | held |
+
+The pre-stated contradiction ("a large drop for reasoning-first JSON, or no drop for answer-first JSON")
+did not happen for answer-first; for reasoning-first, Llama's −9 pp is a real but moderate drop, so the
+conclusion holds for qwen3 and Gemma and only mostly for Llama.
+
+**Exploratory, not pre-registered** (found while reading failures; treat as leads, not results):
+
+- Why Llama pays a tax with the reasoning first: its JSON reasoning is shorter (125 vs 211 tokens) and in
+  8 of 100 replies contains no worked arithmetic at all, only a plan ("First, calculate… Then…"), against 0
+  of 100 in free text; 4 of those 8 were wrong. The rest of the gap is arithmetic slips in the shorter text.
+- Answer-first replies know they are wrong: when the later reasoning ends on a different number, that
+  number is the right one in 26/29 (qwen3), 16/23 (llama) and 14/15 (gemma) cases, and the committed answer
+  is right in 0–1. The runaway replies are the model finding the right answer, failing to reconcile it with
+  the one it already wrote ("I am still getting 80. I must be misinterpreting something."), and looping
+  to the cap.
+- With greedy decoding, the schema constraint changes the answer only where the model would have broken
+  the format: the same Part A answer in 598/600 (qwen3) and 596/600 (llama) prompt/schema pairs, and Llama's reformat errors
+  vanish under the enum. It is a format guarantee, not an accuracy lever, in either direction.
+- Missing-field invention is almost entirely one field: with `eatType` removed, gemma writes "restaurant"
+  in 24/24 records and qwen3 in 17/24; every other removed field is filled in at most 3 of ~25.

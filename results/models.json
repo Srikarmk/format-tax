@@ -118,5 +118,45 @@
     "num_predict": 300
    }
   }
+ },
+ "qwen3:30b-a3b": {
+  "model": "qwen3:30b-a3b",
+  "digest": "ad815644918f0eaab341c12b67837cc6dd4562342cdaf118f83d5d554cb37226",
+  "capabilities": [
+   "completion",
+   "tools",
+   "thinking"
+  ],
+  "details": {
+   "parent_model": "",
+   "format": "gguf",
+   "family": "qwen3moe",
+   "families": [
+    "qwen3moe"
+   ],
+   "parameter_size": "30.5B",
+   "quantization_level": "Q4_K_M"
+  },
+  "think": true,
+  "options": {
+   "gsm8k": {
+    "temperature": 0,
+    "seed": 7,
+    "num_ctx": 4096,
+    "num_predict": 4096
+   },
+   "mmlu": {
+    "temperature": 0,
+    "seed": 7,
+    "num_ctx": 4096,
+    "num_predict": 4096
+   },
+   "drift": {
+    "temperature": 0,
+    "seed": 7,
+    "num_ctx": 4096,
+    "num_predict": 4096
+   }
+  }
  }
 }
